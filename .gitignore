@@ -1,9 +1,53 @@
-venv/
+# Logs directory
+logs/
+*.log
+
+# Python cache
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ML Models (optional - uncomment if models are large)
+# models/*.pkl
+
+# Data files (keep structure but not data)
+data/*.csv
+data/*.json
+!data/.gitkeep
+
+# Streamlit
 .streamlit/
 
-# allow models & assets
-!models/
-!assets/
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/

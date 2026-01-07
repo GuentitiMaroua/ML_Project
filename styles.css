@@ -1,0 +1,1098 @@
+/* SmartCoach Pro - Professional Stylesheet */
+/* Design System CSS - Extracted from inline styles for better maintainability */
+
+/* ============================================ */
+/* 1. IMPORTS & FONTS */
+/* ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ============================================ */
+/* 2. CSS VARIABLES (Design Tokens) */
+/* ============================================ */
+:root {
+    /* Colors */
+    --color-primary: #6366f1;
+    --color-primary-dark: #4f46e5;
+    --color-primary-darker: #4338ca;
+    --color-secondary: #8b5cf6;
+    --color-secondary-dark: #7c3aed;
+    --color-accent: #ec4899;
+
+    --color-success: #10b981;
+    --color-success-dark: #059669;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+
+    /* Backgrounds */
+    --bg-dark: #0a0e1a;
+    --bg-surface: #0f1419;
+    --bg-surface-elevated: #1a1f35;
+
+    /* Text */
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.85);
+    --text-tertiary: rgba(255, 255, 255, 0.7);
+    --text-disabled: rgba(255, 255, 255, 0.5);
+
+    /* Borders */
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --border-medium: rgba(255, 255, 255, 0.15);
+    --border-strong: rgba(255, 255, 255, 0.25);
+
+    /* Modern Shadows */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
+    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.3);
+    --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.4);
+
+    /* Colored Shadows for depth */
+    --shadow-primary: 0 8px 24px rgba(99, 102, 241, 0.35);
+    --shadow-secondary: 0 8px 24px rgba(139, 92, 246, 0.35);
+    --shadow-success: 0 6px 20px rgba(16, 185, 129, 0.35);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-s: 0.5rem;
+    --spacing-m: 1rem;
+    --spacing-l: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 2.5rem;
+    --spacing-3xl: 3rem;
+    --spacing-4xl: 4rem;
+
+    /* Border Radius */
+    --radius-s: 0.5rem;
+    --radius-m: 0.75rem;
+    --radius-l: 1rem;
+    --radius-xl: 1.25rem;
+    --radius-2xl: 1.5rem;
+
+    /* Transitions */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================ */
+/* 3. GLOBAL RESETS & BASE STYLES */
+/* ============================================ */
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#MainMenu,
+footer,
+header,
+.stDeployButton,
+div[data-testid="stSidebarNav"],
+section[data-testid="stSidebarNav"],
+.css-1cypcdb,
+[data-testid="stSidebarNav"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide any default Streamlit navigation */
+.stApp>header,
+.stApp nav {
+    display: none !important;
+}
+
+/* ============================================ */
+/* 4. LAYOUT & BACKGROUNDS */
+/* ============================================ */
+.main {
+    background: var(--bg-dark);
+    position: relative;
+}
+
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+}
+
+.bg-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(10, 14, 26, 0.88) 0%, rgba(26, 31, 53, 0.85) 100%);
+    z-index: -1;
+}
+
+/* ============================================ */
+/* 5. SIDEBAR */
+/* ============================================ */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%) !important;
+    border-right: 1px solid var(--border-subtle);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-testid="stSidebar"] .stButton>button {
+    width: 100%;
+    text-align: left;
+    padding: var(--spacing-m) var(--spacing-l);
+    margin: 0.3rem 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-m);
+    color: var(--text-tertiary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all var(--transition-base);
+    border-left: 3px solid transparent;
+}
+
+[data-testid="stSidebar"] .stButton>button:hover {
+    background: rgba(99, 102, 241, 0.15);
+    color: white;
+    border-left-color: var(--color-primary);
+    transform: translateX(4px);
+}
+
+/* ============================================ */
+/* 6. GLASS MORPHISM CARDS - ENHANCED */
+/* ============================================ */
+.glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)) !important;
+    backdrop-filter: blur(24px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+    border-radius: var(--radius-2xl) !important;
+    padding: var(--spacing-2xl) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+        var(--shadow-lg),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: var(--spacing-xl) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.glass-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow:
+        var(--shadow-2xl),
+        var(--shadow-primary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-card:hover::before {
+    left: 100%;
+}
+
+/* ============================================ */
+/* 7. TYPOGRAPHY */
+/* ============================================ */
+h1 {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1.5px;
+    margin-bottom: var(--spacing-m) !important;
+}
+
+h2 {
+    font-size: 2rem !important;
+    color: #f1f5f9 !important;
+    font-weight: 700 !important;
+    margin-bottom: var(--spacing-l) !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+    color: #e2e8f0 !important;
+    font-weight: 600 !important;
+}
+
+p,
+label,
+span {
+    color: var(--text-secondary) !important;
+    line-height: 1.7;
+}
+
+/* ============================================ */
+/* 8. BUTTONS - MODERN & INTERACTIVE */
+/* ============================================ */
+.stButton>button {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-l);
+    padding: 0.875rem var(--spacing-2xl);
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: var(--shadow-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stButton>button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.stButton>button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.stButton>button:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary-darker) 100%);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+        var(--shadow-xl),
+        0 0 0 3px rgba(99, 102, 241, 0.2),
+        var(--shadow-glow);
+}
+
+.stButton>button:active {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: var(--shadow-md);
+}
+
+.stDownloadButton>button {
+    background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
+    color: white;
+    border-radius: var(--radius-m);
+    padding: 0.875rem var(--spacing-xl);
+    font-weight: 600;
+    box-shadow: var(--shadow-success);
+    transition: all 0.3s;
+}
+
+.stDownloadButton>button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-lg), var(--shadow-success);
+}
+
+/* ============================================ */
+/* 9. FORM INPUTS - MODERN */
+/* ============================================ */
+.stTextInput>div>div>input,
+.stSelectbox>div>div>select {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: var(--radius-l);
+    color: white !important;
+    padding: 0.875rem var(--spacing-l) !important;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stTextInput>div>div>input:focus,
+.stSelectbox>div>div>select:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.25),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(99, 102, 241, 0.2);
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: translateY(-1px);
+}
+
+.stTextInput>div>div>input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================ */
+/* 10. METRICS & STATISTICS - ENHANCED */
+/* ============================================ */
+[data-testid="stMetricValue"] {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    background-clip: text;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    filter: drop-shadow(0 2px 12px rgba(99, 102, 241, 0.4));
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 2px 12px rgba(99, 102, 241, 0.4));
+    }
+
+    50% {
+        filter: drop-shadow(0 4px 16px rgba(99, 102, 241, 0.6));
+    }
+}
+
+[data-testid="stMetricLabel"] {
+    color: var(--text-tertiary) !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+div[data-testid="metric-container"] {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.12));
+    backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+div[data-testid="metric-container"]::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+div[data-testid="metric-container"]:hover::before {
+    opacity: 1;
+}
+
+div[data-testid="metric-container"]:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow:
+        var(--shadow-lg),
+        var(--shadow-primary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================ */
+/* 11. PROGRESS BARS */
+/* ============================================ */
+.stProgress>div>div>div {
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-accent) 100%);
+    border-radius: var(--radius-m);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* ============================================ */
+/* 12. ALERTS & MESSAGES */
+/* ============================================ */
+.stSuccess,
+.stError,
+.stWarning,
+.stInfo {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: var(--radius-l);
+    border-left: 4px solid;
+    padding: var(--spacing-l) var(--spacing-xl);
+}
+
+.stSuccess {
+    border-left-color: var(--color-success);
+    color: var(--color-success) !important;
+}
+
+.stError {
+    border-left-color: var(--color-danger);
+    color: var(--color-danger) !important;
+}
+
+.stInfo {
+    border-left-color: var(--color-info);
+    color: var(--color-info) !important;
+}
+
+.stWarning {
+    border-left-color: var(--color-warning);
+    color: var(--color-warning) !important;
+}
+
+/* ============================================ */
+/* 13. DATA FRAMES & TABLES */
+/* ============================================ */
+[data-testid="stDataFrame"] {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(15px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ============================================ */
+/* 14. TABS */
+/* ============================================ */
+.stTabs [data-baseweb="tab-list"] {
+    gap: var(--spacing-m);
+    background: rgba(20, 30, 50, 0.6);
+    backdrop-filter: blur(20px);
+    padding: var(--spacing-m);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-m);
+    padding: 0.875rem var(--spacing-xl);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all var(--transition-base);
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    background: rgba(99, 102, 241, 0.2);
+    color: var(--text-primary);
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+}
+
+/* ============================================ */
+/* 15. SCROLLBAR */
+/* ============================================ */
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(20, 30, 50, 0.4);
+    border-radius: var(--radius-m);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: var(--radius-m);
+    border: 3px solid rgba(20, 30, 50, 0.4);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-secondary-dark) 100%);
+}
+
+/* ============================================ */
+/* 16. LOADING ANIMATIONS */
+/* ============================================ */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    border: 4px solid var(--border-subtle);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================ */
+/* 17. RESPONSIVE DESIGN */
+/* ============================================ */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    .glass-card {
+        padding: var(--spacing-l);
+    }
+
+    .stButton>button {
+        padding: var(--spacing-m) var(--spacing-l);
+        font-size: 0.95rem;
+    }
+}
+
+/* ============================================ */
+/* 18. UTILITY CLASSES */
+/* ============================================ */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 {
+    margin-top: var(--spacing-m);
+}
+
+.mt-2 {
+    margin-top: var(--spacing-xl);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-2xl);
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-m);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-xl);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-2xl);
+}
+
+/* ============================================ */
+/* 19. LOGIN PAGE - PREMIUM DESIGN */
+/* ============================================ */
+
+/* Login Container - Card-based layout */
+/* ==================================================
+   ULTRA-MODERN LOGIN CONTAINER WITH ANIMATIONS
+   ================================================== */
+
+/* Animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+    }
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-container {
+    animation: slideInFromTop 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    background: linear-gradient(145deg,
+            rgba(30, 30, 46, 0.95) 0%,
+            rgba(24, 24, 37, 0.98) 100%);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 2px solid rgba(99, 102, 241, 0.2);
+    border-radius: 32px;
+    padding: 48px 40px;
+    box-shadow:
+        0 32px 80px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 8px 32px rgba(99, 102, 241, 0.15);
+    margin: 2rem auto;
+    max-width: 650px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center,
+            rgba(139, 92, 246, 0.15) 0%,
+            transparent 70%);
+    animation: float 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.login-container::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center,
+            rgba(99, 102, 241, 0.1) 0%,
+            transparent 70%);
+    animation: float 10s ease-in-out infinite reverse;
+    pointer-events: none;
+}
+
+/* Brand Header */
+.brand-header {
+    text-align: center;
+    padding-bottom: 40px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.brand-title {
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    margin: 0 0 12px 0 !important;
+    background: linear-gradient(135deg,
+            #ffffff 0%,
+            #a78bfa 50%,
+            #6366f1 100%);
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    animation: glow 3s ease-in-out infinite;
+}
+
+.brand-subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0 !important;
+}
+
+/* Form Section Headers */
+.form-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1.5rem;
+}
+
+.form-title {
+    color: #f8fafc !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 0.75rem !important;
+    letter-spacing: -0.5px;
+}
+
+.form-description {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group input {
+    width: 100%;
+}
+
+/* Login Footer */
+.login-footer {
+    text-align: center;
+    padding-top: 2.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-footer p {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.5px;
+    margin: 0 !important;
+}
+
+/* Enhanced Inputs for Login */
+[data-testid=\"stForm\"] input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 0.875rem !important;
+    color: white !important;
+    padding: 1rem 1.25rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-testid=\"stForm\"] input:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow:
+        0 0 0 4px rgba(99, 102, 241, 0.15),
+        0 4px 16px rgba(99, 102, 241, 0.25) !important;
+    transform: translateY(-1px);
+}
+
+[data-testid="stForm"] input::placeholder {
+    color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Login Page - Remove label visibility */
+[data-testid="stForm"] label {
+    display: none !important;
+}
+
+/* ============================================ */
+/* 20. DASHBOARD PAGE - PROFESSIONAL DESIGN */
+/* ============================================ */
+
+/* Dashboard Hero Section */
+.dashboard-hero {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.18)) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
+    border-radius: 1.75rem !important;
+    padding: 3rem 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(99, 102, 241, 0.12) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    margin: 0 0 1.5rem 0 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text;
+    letter-spacing: -1.5px;
+    line-height: 1.2;
+}
+
+.hero-badges {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+/* Level Badge */
+.level-badge {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    box-shadow:
+        0 6px 20px rgba(99, 102, 241, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.level-badge:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px rgba(99, 102, 241, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.level-text,
+.level-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.level-divider {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+}
+
+/* XP Badge */
+.xp-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.xp-value {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: white;
+}
+
+.xp-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Metrics Section */
+.metrics-section {
+    margin-bottom: 2.5rem;
+}
+
+/* Dashboard Cards - Base */
+.dashboard-card {
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border-radius: 1.5rem !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Purple Card (Level Progress) */
+.dashboard-card-purple {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(99, 102, 241, 0.12)) !important;
+    border: 1px solid rgba(139, 92, 246, 0.35) !important;
+}
+
+/* Green Card (Achievements) */
+.dashboard-card-green {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.12)) !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Pink Card (Active Program) */
+.dashboard-card-pink {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(219, 39, 119, 0.12)) !important;
+    border: 1px solid rgba(236, 72, 153, 0.35) !important;
+}
+
+/* Card Title */
+.card-title {
+    color: #f1f5f9 !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.25rem !important;
+    letter-spacing: -0.3px;
+}
+
+/* Section Title */
+.section-title {
+    color: #f1f5f9 !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.5rem !important;
+    letter-spacing: -0.3px;
+}
+
+/* Quick Actions Section */
+.quick-actions-section {
+    margin-bottom: 2rem;
+}
+
+/* ============================================ */
+/* 21. WORKOUT PAGE - PROFESSIONAL DESIGN */
+/* ============================================ */
+
+/* Workout Hero Section */
+.workout-hero {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(139, 92, 246, 0.18));
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1.5px solid rgba(236, 72, 153, 0.35);
+    border-radius: 1.75rem;
+    padding: 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(236, 72, 153, 0.12);
+    text-align: center;
+}
+
+.page-hero-title {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    margin: 0 0 0.75rem 0 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #ec4899 100%);
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text;
+    letter-spacing: -1.5px;
+    line-height: 1.2;
+}
+
+.page-hero-subtitle {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}
+
+/* Sidebar Title */
+.sidebar-title {
+    color: #f1f5f9 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* ============================================ */
+/* 22. PROGRAMS PAGE - PROFESSIONAL DESIGN */
+/* ============================================ */
+
+.programs-hero {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(99, 102, 241, 0.18)) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border: 1.5px solid rgba(59, 130, 246, 0.35) !important;
+    border-radius: 1.75rem !important;
+    padding: 3rem 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(59, 130, 246, 0.12) !important;
+    text-align: center !important;
+}
+
+/* ============================================ */
+/* 23. ACHIEVEMENTS PAGE - PROFESSIONAL DESIGN */
+/* ============================================ */
+
+.achievements-hero {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.18));
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1.5px solid rgba(245, 158, 11, 0.35);
+    border-radius: 1.75rem;
+    padding: 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(245, 158, 11, 0.12);
+    text-align: center;
+}
+
+/* ============================================ */
+/* 24. HISTORY PAGE - PROFESSIONAL DESIGN */
+/* ============================================ */
+
+.history-hero {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.18));
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    border-radius: 1.75rem;
+    padding: 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(16, 185, 129, 0.12);
+    text-align: center;
+}
