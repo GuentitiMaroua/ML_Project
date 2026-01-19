@@ -157,7 +157,7 @@ def workout_page(bg_image):
                     duration=duration,
                     user_profile=user,
                     reps=np.random.randint(5, 12),
-                    fatigue_factor=np.random.uniform(0, 0.3),
+                    fatigue_factor=np.random.uniform(0, 0.12),  # ✅ Réduit de 0.3 à 0.12 pour meilleure régularité
                     form_quality=np.random.uniform(0.8, 1.0)
                 )
                 
@@ -197,21 +197,59 @@ def workout_page(bg_image):
                 predicted_exercise = exercise_type if not auto_detect else st.session_state.true_exercise
                 predicted_name = get_exercise_name(predicted_exercise)
             
-            # ✅ AFFICHAGE UNIQUE : Carte bleue simple
-            st.markdown(f"""
-            <div style='
-                background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.1));
-                padding: 2rem;
-                border-radius: 0.75rem;
-                border-left: 4px solid #6366f1;
-                margin: 1rem 0;
-                text-align: center;
-            '>
-                <div style='font-size: 2.5rem; font-weight: 700; color: #6366f1;'>
-                    {predicted_name}
+            # ✅ AFFICHAGE : Exercice + Confiance ML
+            col_ex, col_conf = st.columns([3, 1])
+            
+            with col_ex:
+                st.markdown(f"""
+                <div style='
+                    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.1));
+                    padding: 2rem;
+                    border-radius: 0.75rem;
+                    border-left: 4px solid #6366f1;
+                    margin: 1rem 0;
+                    text-align: center;
+                '>
+                    <div style='font-size: 2.5rem; font-weight: 700; color: #6366f1;'>
+                        {predicted_name}
+                    </div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+            
+            with col_conf:
+                if confidence is not None:
+                    # Couleur selon confiance
+                    if confidence >= 0.85:
+                        color = "#10b981"
+                        icon = "✅"
+                    elif confidence >= 0.70:
+                        color = "#f59e0b"
+                        icon = "⚠️"
+                    else:
+                        color = "#ef4444"
+                        icon = "❌"
+                    
+                    st.markdown(f"""
+                    <div style='
+                        background: rgba(255, 255, 255, 0.05);
+                        padding: 1.5rem 1rem;
+                        border-radius: 0.75rem;
+                        border: 2px solid {color};
+                        text-align: center;
+                        margin: 1rem 0;
+                    '>
+                        <div style='font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;'>
+                            ML Confidence
+                        </div>
+                        <div style='font-size: 1.8rem; font-weight: 800; color: {color};'>
+                            {icon} {confidence:.0%}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Warning si faible confiance
+                    if confidence < 0.75:
+                        st.warning(f"⚠️ **Détection incertaine** ({confidence:.0%}). Vérifiez que l'exercice détecté correspond bien à votre mouvement.")
             
             # ==========================================
             # ANALYSE DU MOUVEMENT

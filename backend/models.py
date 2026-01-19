@@ -102,7 +102,7 @@ class Workout(Base):
     
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    exercise = Column(String(50), nullable=False)
+    exercise = Column(String(50), nullable=False, index=True)  # ✅ Index pour filtrage rapide
     repetitions = Column(Integer, nullable=False)
     duration = Column(Float, nullable=False)  # seconds
     score = Column(Float, nullable=False)
@@ -227,7 +227,7 @@ class UserStats(Base):
     total_workouts = Column(Integer, default=0)
     total_time = Column(Float, default=0.0)  # seconds
     xp_points = Column(Integer, default=0)
-    level = Column(Integer, default=1)
+    level = Column(Integer, default=1, index=True)  # ✅ Index pour leaderboards
     current_streak = Column(Integer, default=0)
     best_streak = Column(Integer, default=0)
     last_workout_date = Column(DateTime)

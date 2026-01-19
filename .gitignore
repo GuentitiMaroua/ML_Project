@@ -1,19 +1,29 @@
-# Logs directory
-logs/
-*.log
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Virtual environments
+# Virtual Environment
 venv/
-env/
 ENV/
-.venv
+env/
 
 # IDE
 .vscode/
@@ -22,32 +32,36 @@ ENV/
 *.swo
 *~
 
-# OS
-.DS_Store
-Thumbs.db
+# Environment variables
+.env
+.env.local
+.env.production
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
+data/*.db
 
-# ML Models (optional - uncomment if models are large)
-# models/*.pkl
+# Logs
+logs/
+*.log
 
-# Data files (keep structure but not data)
-data/*.csv
-data/*.json
-!data/.gitkeep
+# OS
+.DS_Store
+Thumbs.db
 
 # Streamlit
-.streamlit/
+.streamlit/secrets.toml
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# ML Models (optionnel - si trop gros)
+# models/*.pkl
 
-# Build
-build/
-dist/
-*.egg-info/
+# Data files (grandes datasets)
+data/realistic_dataset.pkl
+data/*.pkl
+
+# Temporary files
+tmp/
+temp/
+*.tmp
