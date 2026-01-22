@@ -25,6 +25,7 @@ from src.ml_predictor import get_ml_predictor
 from backend.services.workout_service import create_workout
 from backend.services.ai_coach_service import AICoach
 from src.gamification import check_and_unlock_achievements
+from src.workout_programs import advance_program_day
 
 
 def get_exercise_name(exercise_key: str) -> str:
@@ -363,6 +364,12 @@ def workout_page(bg_image):
                     auto_detect,
                     confidence
                 )
+                
+                # ✅ Avancer le jour du programme (si actif)
+                if workout:
+                    program_advanced = advance_program_day(st.session_state.user_id)
+                    if program_advanced:
+                        st.info("📅 Program day advanced!")
                 
                 # Vérifier achievements
                 if workout:

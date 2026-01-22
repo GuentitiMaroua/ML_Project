@@ -70,17 +70,31 @@ def update_user_stats_after_workout(db: Session, user_id: int, duration: float, 
     stats.xp_points += calculate_xp_from_score(score)
     stats.level = (stats.xp_points // 100) + 1  # XP_PER_LEVEL = 100
     
+    # ✅ Improved Streak Calculation Logic
     today = datetime.utcnow().date()
+    
     if stats.last_workout_date:
-        diff = (today - stats.last_workout_date.date()).days
-        if diff == 1:
+        last_date = stats.last_workout_date.date()
+        diff = (today - last_date).days
+        
+        if diff == 0:
+            # Multiple workouts same day - streak stays the same
+            logger.debug(f"Same day workout for user {user_id}, streak unchanged: {stats.current_streak}")
+            pass
+        elif diff == 1:
+            # Consecutive day - increment streak
             stats.current_streak += 1
             stats.best_streak = max(stats.best_streak, stats.current_streak)
-        elif diff > 1:
+            logger.info(f"User {user_id} streak increased to {stats.current_streak} days")
+        else:
+            # Streak broken - reset to 1
+            logger.info(f"User {user_id} streak broken (gap of {diff} days), resetting to 1")
             stats.current_streak = 1
     else:
+        # First workout ever
         stats.current_streak = 1
         stats.best_streak = 1
+        logger.info(f"First workout for user {user_id}, streak initialized to 1")
     
     stats.last_workout_date = datetime.utcnow()
 
