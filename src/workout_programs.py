@@ -4,11 +4,12 @@ Programmes pré-définis et personnalisables
 """
 from typing import List, Dict, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
+from sqlalchemy import func
 
 from backend.database import get_db
-from backend.models import Program, ProgramExercise, UserProgram, ProgramStatus, FitnessLevel
+from backend.models import Program, ProgramExercise, UserProgram, ProgramStatus, FitnessLevel, Workout
 
 logger = logging.getLogger(__name__)
 
@@ -262,7 +263,7 @@ def enroll_user_in_program(user_id: int, program_id: int) -> bool:
 
 
 def get_user_active_program(user_id: int) -> Optional[Dict]:
-    """Récupère le programme actif d'un utilisateur"""
+    """Récupère le programme actif avec auto-advance calendrier (SANS RÉCURSION)"""
     db = get_db()
     
     try:
@@ -279,7 +280,33 @@ def get_user_active_program(user_id: int) -> Optional[Dict]:
         if not program:
             return None
         
-        # Récupérer les exercices du jour actuel
+        # ✅ AUTO-ADVANCE: Avancer UNE SEULE FOIS si nouveau jour calendrier
+        today = datetime.utcnow().date()
+        start_date = user_program.start_date.date()
+        current_day = user_program.current_day
+        total_days = program.duration_weeks * 7
+        
+        # Date attendue pour le jour actuel du programme
+        expected_date = start_date + timedelta(days=current_day - 1)
+        
+        # Si on est APRÈS la date attendue ET qu'on n'a pas déjà avancé aujourd'hui
+        if today > expected_date and current_day < total_days:
+            # Avancer d'UN SEUL jour
+            user_program.current_day += 1
+            db.commit()
+            logger.info(f"Auto-advanced user {user_id} from day {current_day} to {user_program.current_day}")
+            # Mettre à jour current_day pour le reste de la fonction
+            current_day = user_program.current_day
+            
+            # Vérifier si programme terminé
+            if current_day >= total_days:
+                user_program.status = ProgramStatus.COMPLETED
+                user_program.completion_date = datetime.utcnow()
+                db.commit()
+                logger.info(f"User {user_id} completed program!")
+                return None
+        
+        # Récupérer les exercices du jour actuel (après potentiel avancement)
         today_exercises = db.query(ProgramExercise).filter(
             ProgramExercise.program_id == program.id,
             ProgramExercise.day == user_program.current_day
@@ -311,13 +338,11 @@ def get_user_active_program(user_id: int) -> Optional[Dict]:
 
 def advance_program_day(user_id: int) -> bool:
     """
-    Avance au jour suivant du programme (max 1 fois par jour)
+    Valide que tous les exercices du jour sont terminés
+    L'avancement réel se fait automatiquement le lendemain dans get_user_active_program()
     
-    Args:
-        user_id: ID de l'utilisateur
-        
     Returns:
-        True si progression réussie, False sinon
+        True si validation réussie, False sinon
     """
     db = get_db()
     
@@ -330,47 +355,12 @@ def advance_program_day(user_id: int) -> bool:
         if not user_program:
             return False
         
-        # ✅ IMPORTANT: Ne progresser qu'une fois par jour
-        # On vérifie si le dernier workout était avant aujourd'hui
-        from backend.models import UserStats
-        stats = db.query(UserStats).filter(UserStats.user_id == user_id).first()
-        
-        if stats and stats.last_workout_date:
-            today = datetime.utcnow().date()
-            last_workout_date = stats.last_workout_date.date()
-            
-            # Si on a déjà fait un workout aujourd'hui et que c'est le premier,
-            # on incrémente le jour du programme
-            # MAIS si on fait plusieurs workouts le même jour, on ne re-incrémente pas
-            
-            # Pour savoir si on a déjà incrémenté aujourd'hui, on regarde la date de début
-            # et le current_day
-            days_since_start = (today - user_program.start_date.date()).days
-            
-            # Si current_day > days_since_start + 1, c'est qu'on a déjà avancé aujourd'hui
-            if user_program.current_day > days_since_start + 1:
-                logger.debug(f"Program day already advanced today for user {user_id}")
-                return False
-        
-        program = db.query(Program).filter(Program.id == user_program.program_id).first()
-        total_days = program.duration_weeks * 7
-        
-        # Incrémenter le jour
-        user_program.current_day += 1
-        logger.info(f"User {user_id} program advanced to day {user_program.current_day}/{total_days}")
-        
-        # Programme terminé?
-        if user_program.current_day > total_days:
-            user_program.status = ProgramStatus.COMPLETED
-            user_program.completion_date = datetime.utcnow()
-            logger.info(f"User {user_id} completed program {program.name}!")
-        
-        db.commit()
+        # Juste valider - l'avancement se fera automatiquement demain
+        logger.info(f"User {user_id} completed day {user_program.current_day}")
         return True
         
     except Exception as e:
-        logger.error(f"Error advancing program day for user {user_id}: {e}")
-        db.rollback()
+        logger.error(f"Error validating day completion for user {user_id}: {e}")
         return False
     finally:
         db.close()

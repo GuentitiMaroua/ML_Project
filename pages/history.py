@@ -89,6 +89,9 @@ def history_page(background_b64=None):
         'Timestamp': workout.timestamp
     } for workout in workouts])
     
+    # ✅ Dédupliquer au cas où (protection contre doublons)
+    df = df.drop_duplicates(subset=['Date', 'Exercise', 'Reps', 'Score', 'Duration'], keep='first')
+    
     # Get statistics  
     stats = get_workout_stats(st.session_state.user_id, days=30)
     
@@ -259,12 +262,12 @@ def history_page(background_b64=None):
         )
         date_text = Paragraph(f"Generated on {datetime.now().strftime('%B %d, %Y at %H:%M')}", date_style)
         elements.append(date_text)
-        elements.append(Spacer(1, 30))
+        elements.append(Spacer(1, 10))
         
         # Statistics as simple table (original style)
         stats_header = Paragraph("<b>30-Day Statistics</b>", styles['Heading2'])
         elements.append(stats_header)
-        elements.append(Spacer(1, 12))
+        elements.append(Spacer(1, 6))
         
         stats_data = [
             ['Metric', 'Value'],
@@ -291,7 +294,7 @@ def history_page(background_b64=None):
         ]))
         
         elements.append(stats_table)
-        elements.append(Spacer(1, 30))
+        elements.append(Spacer(1, 10))
         
         # Performance chart - COLORFUL
         try:
@@ -341,12 +344,16 @@ def history_page(background_b64=None):
             # Save to image with higher quality
             img_bytes = pio.to_image(perf_fig, format='png', width=800, height=400, scale=2)
             img_buffer = BytesIO(img_bytes)
-            elements.append(Image(img_buffer, width=6.5*inch, height=3.25*inch))
-            elements.append(Spacer(1, 20))
+            elements.append(Image(img_buffer, width=6.5*inch, height=2.8*inch))
+            elements.append(Spacer(1, 10))
         except Exception as e:
-            error_para = Paragraph(f"<i>Performance chart unavailable</i>", styles['Normal'])
+            import traceback
+            error_msg = f"Chart error: {str(e)}"
+            print(f"PDF Performance Chart Error: {error_msg}")
+            print(traceback.format_exc())
+            error_para = Paragraph(f"<i>{error_msg}</i>", styles['Normal'])
             elements.append(error_para)
-            elements.append(Spacer(1, 20))
+            elements.append(Spacer(1, 10))
         
         # Exercise distribution chart - COLORFUL PIE CHART
         try:
@@ -388,20 +395,22 @@ def history_page(background_b64=None):
             
             img_bytes = pio.to_image(pie_fig, format='png', width=800, height=400, scale=2)
             img_buffer = BytesIO(img_bytes)
-            elements.append(Image(img_buffer, width=6.5*inch, height=3.25*inch))
-            elements.append(Spacer(1, 30))
+            elements.append(Image(img_buffer, width=6.5*inch, height=2.8*inch))
+            elements.append(Spacer(1, 10))
         except Exception as e:
-            error_para = Paragraph(f"<i>Exercise distribution chart unavailable</i>", styles['Normal'])
+            import traceback
+            error_msg = f"Chart error: {str(e)}"
+            print(f"PDF Exercise Chart Error: {error_msg}")
+            print(traceback.format_exc())
+            error_para = Paragraph(f"<i>{error_msg}</i>", styles['Normal'])
             elements.append(error_para)
-            elements.append(Spacer(1, 30))
+            elements.append(Spacer(1, 10))
         
-        # Page break before table
-        elements.append(PageBreak())
-        
+        # ✅ GARDER SUR MÊME PAGE - Pas de PageBreak
         # Section title for workout details
         details_title = Paragraph("<b>Workout Details</b>", styles['Heading2'])
         elements.append(details_title)
-        elements.append(Spacer(1, 12))
+        elements.append(Spacer(1, 6))
         
         # Workout table with cleaned exercise names
         table_data = [['Date', 'Exercise', 'Reps', 'Score', 'Duration']]

@@ -8,7 +8,7 @@ from pathlib import Path
 import logging
 
 # Import pages
-from pages import dashboard_page, workout_page, programs_page, achievements_page, history_page
+from pages import dashboard_page, workout_page, programs_page, achievements_page, history_page, my_program_page
 
 # Import authentication
 from backend.auth import login_user, register_user
@@ -449,6 +449,7 @@ def render_sidebar():
         pages = [
             ('dashboard', 'Dashboard'),
             ('workout', 'Workout'),
+            ('my_program', 'My Program'),
             ('programs', 'Programs'),
             ('achievements', 'Achievements'),
             ('history', 'History')
@@ -543,6 +544,9 @@ def main_app():
     elif page == 'achievements':
         set_background(ACH_BG)
         achievements_page(ACH_BG)
+    elif page == 'my_program':
+        set_background(DASH_BG)
+        my_program_page()
     elif page == 'history':
         set_background(DASH_BG)
         history_page(DASH_BG)

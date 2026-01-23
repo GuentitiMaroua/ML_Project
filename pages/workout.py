@@ -25,7 +25,7 @@ from src.ml_predictor import get_ml_predictor
 from backend.services.workout_service import create_workout
 from backend.services.ai_coach_service import AICoach
 from src.gamification import check_and_unlock_achievements
-from src.workout_programs import advance_program_day
+# Note: advance_program_day removed - only used in my_program.py
 
 
 def get_exercise_name(exercise_key: str) -> str:
@@ -84,6 +84,10 @@ def workout_page(bg_image):
     # ==========================================
     st.markdown("###  Exercise Selection")
     
+    # ✅ NOUVEAU: Récupérer le programme actif
+    from src.workout_programs import get_user_active_program
+    active_program = get_user_active_program(st.session_state.get('user_id'))
+    
     # Auto-detect checkbox
     auto_detect = st.checkbox(
         " Enable AI Auto-Detection",
@@ -95,12 +99,50 @@ def workout_page(bg_image):
     
     with col1:
         if not auto_detect:
-            exercise_type = st.selectbox(
-                "Choose Exercise",
-                list(EXERCISES.keys()),
-                format_func=lambda x: get_exercise_name(x),
-                help="Select the exercise you want to perform"
-            )
+            # ✅ LOGIQUE AMÉLIORÉE: Vérifier programme actif
+            if active_program:
+                # Programme actif trouvé
+                if active_program.get('is_rest_day'):
+                    # Vraiment un jour de repos
+                    st.info("🛌 Today is a rest day in your program. You can still do a free workout if you want.")
+                    
+                    # Mode libre pour jours de repos
+                    exercise_type = st.selectbox(
+                        "Choose Exercise",
+                        list(EXERCISES.keys()),
+                        format_func=lambda x: get_exercise_name(x),
+                        help="Select the exercise you want to perform"
+                    )
+                elif len(active_program.get('today_exercises', [])) > 0:
+                    # Jour normal avec exercices
+                    today_exercises = [ex['exercise'] for ex in active_program['today_exercises']]
+                    exercise_names_str = ', '.join([get_exercise_name(ex) for ex in today_exercises])
+                    
+                    st.success(f"📋 Today's program: {exercise_names_str}")
+                    
+                    # Dropdown avec SEULEMENT les exercices du jour
+                    exercise_type = st.selectbox(
+                        "Today's Exercise",
+                        today_exercises,
+                        format_func=lambda x: get_exercise_name(x),
+                        help="Choose from your program's exercises"
+                    )
+                else:
+                    # Programme existe mais pas d'exercices (cas edge)
+                    exercise_type = st.selectbox(
+                        "Choose Exercise",
+                        list(EXERCISES.keys()),
+                        format_func=lambda x: get_exercise_name(x),
+                        help="Select the exercise you want to perform"
+                    )
+            else:
+                # Pas de programme actif → Mode libre
+                exercise_type = st.selectbox(
+                    "Choose Exercise",
+                    list(EXERCISES.keys()),
+                    format_func=lambda x: get_exercise_name(x),
+                    help="Select the exercise you want to perform"
+                )
         else:
             st.info(" AI will automatically detect your exercise type")
     
@@ -351,38 +393,60 @@ def workout_page(bg_image):
         # SAVE WORKOUT
         # ==========================================
         if st.session_state.get('user_id'):
+            # ✅ PROTECTION CONTRE DOUBLE SAUVEGARDE v2
+            # Vérifier dans la DB si un workout similaire existe dans les dernières 30 secondes
+            from backend.models import Workout
+            from backend.database import get_db
+            from datetime import timedelta  # datetime déjà importé globalement !
+            
+            should_save = True
+            db = get_db()
             try:
-                workout = create_workout(
-                    st.session_state.user_id,
-                    predicted_exercise,
-                    analysis['repetitions'],
-                    analysis['duration'],
-                    analysis['score'],
-                    analysis['regularity'],
-                    analysis['speed'],
-                    feedback,
-                    auto_detect,
-                    confidence
-                )
+                # Chercher workout similaire dans les 30 dernières secondes
+                recent_time = datetime.utcnow() - timedelta(seconds=30)
+                existing = db.query(Workout).filter(
+                    Workout.user_id == st.session_state.user_id,
+                    Workout.exercise == predicted_exercise,
+                    Workout.repetitions == analysis['repetitions'],
+                    Workout.timestamp >= recent_time
+                ).first()
                 
-                # ✅ Avancer le jour du programme (si actif)
-                if workout:
-                    program_advanced = advance_program_day(st.session_state.user_id)
-                    if program_advanced:
-                        st.info("📅 Program day advanced!")
-                
-                # Vérifier achievements
-                if workout:
-                    newly_unlocked = check_and_unlock_achievements(st.session_state.user_id)
+                if existing:
+                    should_save = False  # Duplicate détecté !
+            finally:
+                db.close()
+            
+            if should_save:
+                try:
+                    workout = create_workout(
+                        st.session_state.user_id,
+                        predicted_exercise,
+                        analysis['repetitions'],
+                        analysis['duration'],
+                        analysis['score'],
+                        analysis['regularity'],
+                        analysis['speed'],
+                        feedback,
+                        auto_detect,
+                        confidence
+                    )
                     
-                    if newly_unlocked:
-                        st.balloons()
-                        st.markdown("### 🏆 New Achievements Unlocked!")
-                        for achievement in newly_unlocked:
-                            st.success(f"**{achievement['name']}** - +{achievement['xp_reward']} XP")
-                            st.caption(achievement['description'])
-            except Exception as e:
-                st.error(f"Error saving workout: {e}")
+                    # ✅ CORRECTION CRITIQUE: NE PAS avancer automatiquement le jour
+                    # L'utilisateur doit compléter TOUS les exercices et cliquer sur
+                    # "Complete Day & Advance" dans My Program
+                    
+                    # Vérifier achievements
+                    if workout:
+                        newly_unlocked = check_and_unlock_achievements(st.session_state.user_id)
+                        
+                        if newly_unlocked:
+                            st.balloons()
+                            st.markdown("### 🏆 New Achievements Unlocked!")
+                            for achievement in newly_unlocked:
+                                st.success(f"**{achievement['name']}** - +{achievement['xp_reward']} XP")
+                                st.caption(achievement['description'])
+                except Exception as e:
+                    st.error(f"Error saving workout: {e}")
         
         st.divider()
         

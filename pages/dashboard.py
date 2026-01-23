@@ -124,6 +124,24 @@ def dashboard_page(background_b64=None):
         with prog_col2:
             st.caption(f"**{progress_pct:.0f}%**")
         
+        # ✅ NEW: Show today's exercises
+        st.markdown("")
+        if active_program.get('is_rest_day'):
+            st.success("**Rest Day** - Recovery & preparation")
+        else:
+            exercises = active_program.get('today_exercises', [])
+            if exercises:
+                st.markdown("**Today's Workout:**")
+                exercise_names = [ex['exercise'].replace('_', ' ').title() for ex in exercises[:3]]
+                if len(exercises) > 3:
+                    st.caption(f"{', '.join(exercise_names)}, and {len(exercises)-3} more...")
+                else:
+                    st.caption(f"{', '.join(exercise_names)}")
+                
+                if st.button("View Full Program Details", key="view_program_btn", use_container_width=True):
+                    st.session_state.page = 'my_program'
+                    st.rerun()
+        
         st.divider()
     else:
         st.info("No active program. Browse available training programs to begin.")

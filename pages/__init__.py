@@ -5,10 +5,12 @@ from .workout import workout_page
 from .programs import programs_page
 from .achievements import achievements_page
 from .history import history_page
+from .my_program import my_program_page
 
 __all__ = [
     'dashboard_page',
     'workout_page',
+    'my_program_page',
     'programs_page',
     'achievements_page',
     'history_page',
